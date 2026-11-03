@@ -23,13 +23,13 @@ export function defaultModels() {
     [-0.5, 0.42],
   );
   const out = train.centres[2];
-  const belt = openBelt(out, 24, [out[0] - 132, out[1] + 62], 13);
+  const belt = openBelt(out, 24, [out[0] - 40, out[1] + 102], 12);
 
   return {
     scotchYoke: scotchYoke(),
     crankSlider: crankSlider(),
     geneva: geneva(),
-    camFollower: camFollower(),
+    camFollower: camFollower({ stemLen: 36 }),
     ratchet: ratchet(),
     fourBar: fourBar(),
     gearPair: gearPair(pinion, wheel, 0),

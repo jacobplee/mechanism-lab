@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:,">
+  <title>mechanism-lab</title>
+  <meta name="description" content="Textbook mechanisms and involute gears, animated as SVG and checked numerically against their own kinematics.">
+  <link rel="stylesheet" href="demo/style.css">
+  <script type="module" src="demo/app.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="hatch" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="3.2" height="3.2" class="hatch-bg"/>
+        <line x1="0" y1="0" x2="0" y2="3.2" class="hatch-line"/>
+      </pattern>
+      <marker id="arrowhead" viewBox="0 0 10 10" refX="7" refY="5" markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0 0L10 5L0 10z" class="arrowhead"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <header class="top">
+    <div class="title">
+      <h1>mechanism-lab</h1>
+      <p>Textbook mechanisms and involute gears, animated from their kinematics. Every mechanism is checked numerically against properties stated from the mechanism itself, in your browser, on load.</p>
+    </div>
+    <div class="bar">
+      <span id="badge" class="badge pending" role="status" aria-live="polite">Verifying</span>
+      <button id="play" type="button">Pause</button>
+      <label class="speed">Speed <input id="speed" type="range" min="0.1" max="3" step="0.1" value="1"></label>
+    </div>
+  </header>
+
+  <main id="grid" class="grid"></main>
+
+  <footer class="foot">
+    <p>Checks live in <code>src/checks/</code> and never import drawing code. The criteria they implement are listed in <code>ACCEPTANCE.md</code>. Run them in Node with <code>node --test</code>. MIT licensed.</p>
+  </footer>
+</body>
+</html>
