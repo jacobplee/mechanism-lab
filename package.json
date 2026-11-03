@@ -1,0 +1,30 @@
+{
+  "name": "mechanism-lab",
+  "version": "0.1.0",
+  "description": "Kinematic mechanisms and involute gears as a small ES-module library, each checked numerically against its own kinematics.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src/"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "kinematics",
+    "mechanisms",
+    "involute",
+    "gears",
+    "geneva",
+    "four-bar",
+    "svg"
+  ],
+  "author": "Jacob Lee",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
