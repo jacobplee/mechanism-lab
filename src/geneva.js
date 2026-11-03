@@ -89,8 +89,15 @@ export function geneva({
     // disc back to stay clear of every point the star reaches. That removes
     // only what the star actually sweeps, so the disc keeps as much of its
     // locking rim as possible either side of the cut.
-    const dense = resampleClosed(star, 0.4);
-    const B = 720, steps = 360;
+    // Only star points at least c - rl from the star centre can ever reach
+    // the disc, whatever the star's angle.
+    const dense = resampleClosed(star, 0.4).filter(([x, y]) => Math.hypot(x, y) >= c - rl - reliefPlay);
+    // Step the motion so that no point moves more than one angular bin of the
+    // disc between samples (each bin also takes its neighbours' limits). The
+    // star turns fastest mid-index, at a/(c - a) times the driver's speed.
+    const B = 720;
+    const reach = (c + rl) * (a / (c - a)) + rl;
+    const steps = Math.ceil((2 * alphaM * reach) / ((rl * TAU) / B));
     const near = new Array(B).fill(Infinity);
     for (let i = 0; i <= steps; i++) {
       const al = -alphaM + (2 * alphaM * i) / steps;
@@ -107,7 +114,8 @@ export function geneva({
     }
     const radius = near.map((_, b) =>
       Math.min(rl, Math.min(near[(b + B - 1) % B], near[b], near[(b + 1) % B]) - reliefPlay));
-    if (Math.min(...radius) < 0.25 * rl) throw new Error('geneva: relief cuts too close to the driver shaft');
+    const shaft = Math.min(...radius);
+    if (shaft < pinR + 1) throw new Error('geneva: relief cuts too close to the driver shaft');
     lockDisc = [];
     for (let b = 0; b < B; b++) {
       const plain = radius[b] === rl && radius[(b + 1) % B] === rl && radius[(b + B - 1) % B] === rl;

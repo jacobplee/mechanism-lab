@@ -18,7 +18,7 @@ function handoff(model, from, to) {
   return { inside: eLo ? lo : hi, outside: eLo ? hi : lo };
 }
 
-export function checkGeneva(model, { N = 720, dwellSamples = 180, nudgeDeg = 2 } = {}) {
+export function checkGeneva(model, { N = 720, dwellSamples = 120, nudgeDeg = 2 } = {}) {
   const { n, a } = model.params;
   const g = model.geometry;
   const O1 = g.driverCentre, O2 = g.starCentre;
@@ -92,20 +92,27 @@ export function checkGeneva(model, { N = 720, dwellSamples = 180, nudgeDeg = 2 }
   for (const t of sweepTh) {
     const p = model.pose(t);
     const S = starAt(p.star);
-    pinClear = Math.min(pinClear, clearance(pinAt(t), S));
-    lockClear = Math.min(lockClear, clearance(lockAt(t), S));
+    // Gaps above 2 mm are reported as 2: only the smallest gap matters here.
+    pinClear = Math.min(pinClear, clearance(pinAt(t), S, { cap: 2 }));
+    lockClear = Math.min(lockClear, clearance(lockAt(t), S, { cap: 2 }));
   }
 
   // j. the lock holds: during the dwell, nudging the star either way runs it
   // into the driver (locking disc or pin).
   const nudge = (nudgeDeg * Math.PI) / 180;
-  let slack = -Infinity;
-  for (const t of angles(dwellSamples, dwellFrom, dwellTo - dwellFrom).concat(dwellTo)) {
+  // The weak moments are just after the pin leaves and just before it
+  // returns, when the relief is still facing the star, so sample those densely.
+  const edge = (12 * Math.PI) / 180;
+  const lockTh = angles(dwellSamples, dwellFrom, dwellTo - dwellFrom).concat(
+    dwellTo, angles(60, dwellFrom, edge), angles(60, dwellTo - edge, edge));
+  let free = 0;
+  for (const t of lockTh) {
     const p = model.pose(t);
+    const L = lockAt(t), P = pinAt(t);
     for (const sgn of [1, -1]) {
       const S = starAt(p.star + sgn * nudge);
-      const room = Math.min(clearance(lockAt(t), S), clearance(pinAt(t), S));
-      slack = Math.max(slack, room);
+      const hit = clearance(L, S, { cap: 1, signOnly: true }) < 0 || clearance(P, S, { cap: 1, signOnly: true }) < 0;
+      if (!hit) free++;
     }
   }
 
@@ -123,6 +130,7 @@ export function checkGeneva(model, { N = 720, dwellSamples = 180, nudgeDeg = 2 }
       `measured ${fraction.toFixed(4)}`),
     check('M3h', 'pin never cuts into the star (clearance)', pinClear, '>=', 0),
     check('M3i', 'locking disc clears the star (clearance)', lockClear, '>=', 0),
-    check('M3j', `lock holds: star nudged ${nudgeDeg} deg hits the driver (worst room)`, slack, '<=', -1e-9),
+    check('M3j', `lock holds: star nudged ${nudgeDeg} deg either way hits the driver (free cases)`, free, '==', 0,
+      `${2 * lockTh.length} nudges tested`),
   ];
 }

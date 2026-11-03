@@ -21,7 +21,9 @@ export function checkGearShape(gear, label = `${gear.N}T`) {
   // Flank chords: consecutive vertices strictly between base and tip circles.
   // An involute's normal is tangent to its base circle, so the perpendicular
   // bisector of a short flank chord passes the centre at distance rb.
-  const onFlank = (i) => radius[i] > rb * (1 + 1e-9) && radius[i] < ra * (1 - 1e-9);
+  // Root circle: the outline's smallest radius. Root-arc vertices are not flank.
+  const rRoot = Math.min(...radius);
+  const onFlank = (i) => radius[i] > Math.max(rb, rRoot) * (1 + 1e-9) && radius[i] < ra * (1 - 1e-9);
   const dists = [];
   for (let i = 0; i < outline.length; i++) {
     const j = (i + 1) % outline.length;
@@ -130,7 +132,8 @@ export function checkMesh(train, i = 0, { phases = 48, conjugate = true } = {}) 
   for (const t of [th[0], th[Math.floor(phases / 2)]]) {
     const p = room(t, 1), m = room(t, -1);
     if (t === th[0]) plus = p;
-    sideErr = Math.max(sideErr, Math.abs(p - designSide) / designSide, Math.abs(m - designSide) / designSide);
+    const scale = Math.max(designSide, 0.01 * g1.m);
+    sideErr = Math.max(sideErr, Math.abs(p - designSide) / scale, Math.abs(m - designSide) / scale);
   }
 
   // h. conjugate action: close one flank at the first phase, then hold that

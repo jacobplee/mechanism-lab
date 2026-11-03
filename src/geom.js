@@ -123,9 +123,10 @@ function segsCross(a, b, c, d) {
  * than `cap` are reported as `cap`, which lets the search skip every edge that
  * is obviously far away. An optional `region` circle {c, r} limits the search
  * to edges with an end inside it, for when contact can only happen there (two
- * gears can only touch where their tip circles overlap).
+ * gears can only touch where their tip circles overlap). With `signOnly`, an
+ * overlap is reported as a tiny negative number without measuring its depth.
  */
-export function clearance(A, B, { cap = 10, region = null } = {}) {
+export function clearance(A, B, { cap = 10, region = null, signOnly = false } = {}) {
   const [ax0, ay0, ax1, ay1] = bbox(A);
   const [bx0, by0, bx1, by1] = bbox(B);
   if (ax0 - cap > bx1 || bx0 - cap > ax1 || ay0 - cap > by1 || by0 - cap > ay1) return cap;
@@ -147,7 +148,7 @@ export function clearance(A, B, { cap = 10, region = null } = {}) {
   };
   const eA = near(A, [bx0, by0, bx1, by1]);
   const eB = near(B, [ax0, ay0, ax1, ay1]);
-  return clearanceEdges(eA, eB, (p) => inside(p, A), (p) => inside(p, B), cap);
+  return clearanceEdges(eA, eB, (p) => inside(p, A), (p) => inside(p, B), cap, signOnly);
 }
 
 /**
