@@ -7,6 +7,8 @@ mechanism is checked numerically against its own kinematics: in Node with
 
 Built with AI coding agents; every mechanism is checked numerically against its kinematics.
 
+Live demo: [jacobplee.github.io/mechanism-lab](https://jacobplee.github.io/mechanism-lab/)
+
 ## Mechanisms
 
 | | |
@@ -82,8 +84,10 @@ Tests (Node 18 or newer, no install step):
 node --test
 ```
 
-Demo page: serve the folder with any static file server and open it. ES
-modules do not load from `file://`.
+Demo page: it is published with GitHub Pages at
+[jacobplee.github.io/mechanism-lab](https://jacobplee.github.io/mechanism-lab/).
+To run it locally, serve the folder with any static file server and open it.
+ES modules do not load from `file://`.
 
 ```sh
 python3 -m http.server 8000
@@ -94,6 +98,8 @@ The page animates all eight mechanisms, runs `verify()` on the same model
 objects it draws, and shows the result as a badge. Each panel lists its checks
 with measured values. `?still` starts paused, as does a system
 reduced-motion setting.
+
+![The demo page](docs/img/overview.png)
 
 The README images come from `tools/capture.mjs`, which drives the demo page in
 headless Chrome. It needs `puppeteer-core`, `pngjs` and `gifenc`, which are not

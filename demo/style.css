@@ -87,6 +87,7 @@ td.id { width: 2.8em; color: var(--muted); }
 td.val { width: 8.5em; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-align: right; }
 
 .foot { color: var(--muted); font-size: 0.85rem; padding-bottom: 32px; }
+.foot a { color: var(--accent); }
 
 /* drawing */
 .mech path, .plot path { vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
